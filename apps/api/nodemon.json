@@ -1,0 +1,6 @@
+{ 
+  "ext": ".ts",
+  "ignore": [],
+  "watch": ["src"],
+  "exec": "eslint && ts-node ./src/server.ts"
+}
