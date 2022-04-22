@@ -1,6 +1,8 @@
-{ 
+{
   "ext": ".ts",
   "ignore": [],
-  "watch": ["src"],
-  "exec": "eslint && ts-node ./src/server.ts"
+  "watch": [
+    "src"
+  ],
+  "exec": "eslint && ts-node ./src/index.ts"
 }
