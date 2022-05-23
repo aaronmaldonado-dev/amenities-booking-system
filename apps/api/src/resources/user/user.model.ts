@@ -1,13 +1,14 @@
 import bcrypt from 'bcrypt';
-import mongoose, { HookNextFunction } from 'mongoose';
+import { model, Schema } from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
 import validator from 'validator';
 
-import { User as UserInterface } from './user.interface';
+import { HookNextFunction } from '../../interfaces/mongoose.interfaces';
+import { IUserDocument } from './user.interface';
 
-const userSchema = new mongoose.Schema(
+const schema: Schema<IUserDocument> = new Schema(
   {
-    name: {
+    firstName: {
       type: String,
       required: [true, 'Please, provide a name.'],
     },
@@ -17,6 +18,7 @@ const userSchema = new mongoose.Schema(
     },
     address: {
       type: String,
+      unique: true,
       required: [true, 'Please, provide an address.'],
     },
     email: {
@@ -30,6 +32,20 @@ const userSchema = new mongoose.Schema(
       type: String,
       minlength: 8,
       required: [true, 'Please, provide a password.'],
+      select: false,
+    },
+    passwordConfirm: {
+      type: String,
+      required: [true, 'Please, confirm your password.'],
+      validate: {
+        validator: function (this: IUserDocument, el: string) {
+          console.log(this);
+          console.log(el);
+
+          return el === this.password;
+        },
+        message: 'Error, passwords are not the same.',
+      },
     },
   },
   {
@@ -37,35 +53,21 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-userSchema.plugin(uniqueValidator, { message: 'Error, expected {PATH} to be unique.' });
+schema.plugin(uniqueValidator, { message: 'Error, expected {PATH} to be unique.' });
 
-userSchema.pre('save', function (this: UserInterface, next: HookNextFunction) {
-  if (!this.isModified('password')) {
-    return next();
-  }
+schema.pre('save', async function (this: IUserDocument, next: HookNextFunction) {
+  if (!this.isModified('password')) return next();
 
-  bcrypt.hash(this.password, 8, (err, hash) => {
-    if (err) {
-      return next(err);
-    }
+  this.password = await bcrypt.hash(this.password, 12);
 
-    this.password = hash;
-    next();
-  });
+  this.passwordConfirm = undefined;
+
+  next();
 });
 
-userSchema.methods.checkPassword = function (password: string) {
+schema.method('checkPassword', async function (password: string) {
   const passwordHash: string = this.password;
+  return await bcrypt.compare(password, passwordHash);
+});
 
-  return new Promise((resolve, reject) => {
-    bcrypt.compare(password, passwordHash, (err, same) => {
-      if (err) {
-        return reject(err);
-      }
-
-      resolve(same);
-    });
-  });
-};
-
-export const User = mongoose.model('user', userSchema);
+export const User = model<IUserDocument>('User', schema);

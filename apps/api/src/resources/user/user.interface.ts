@@ -1,12 +1,14 @@
-import mongoose from 'mongoose';
+import { Document } from 'mongoose';
 
-export interface User extends mongoose.Document {
-  name: string;
+interface IUser {
+  firstName: string;
   lastName: string;
   email: string;
   address: string;
   password: string;
-  confirmPassword: string;
-  createdAt: string;
-  updatedAt: string;
+  passwordConfirm: string | undefined;
+}
+
+export interface IUserDocument extends IUser, Document {
+  checkPassword: (password: string) => Promise<boolean>;
 }

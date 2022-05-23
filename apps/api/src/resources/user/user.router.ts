@@ -1,8 +1,18 @@
 import { Router } from 'express';
 
-const router = Router();
+import { login, signup } from '../auth/auth.controller';
 
-router.get('/');
-router.put('/');
+export const router = Router();
 
-export default router;
+router.post('/signup', signup);
+router.post('/login', login);
+
+// router // breakme
+//   .route('/user')
+//   .get(userController.getAllUsers)
+//   .post(userController.createUser);
+
+// router // breakme
+//   .route('/user/:id')
+//   .get(userController.getUser)
+//   .patch(userController.updateUser);

@@ -4,7 +4,7 @@ import cors from 'cors';
 import express, { Application } from 'express';
 import mongoose from 'mongoose';
 
-import { signup } from './utils/auth';
+import { router as userRouter } from './resources/user/user.router';
 
 const { DATABASE, PORT } = process.env;
 
@@ -18,7 +18,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.post('/signup', signup);
+app.use('/api/v1/users', userRouter);
 
 export const start = async () => {
   try {
