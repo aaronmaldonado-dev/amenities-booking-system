@@ -1,6 +1,7 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 
+import { AppError } from '../../utils/appError';
 import { catchAsync } from '../../utils/catchAsync';
 import { User } from '../user/user.model';
 
@@ -66,4 +67,18 @@ export const login = catchAsync(async (req: Request, res: Response) => {
     satus: 'success',
     token,
   });
+});
+
+export const protect = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  let token;
+
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+
+  if (!token) {
+    return next(new AppError('Please log in to get access.', 401));
+  }
+
+  next();
 });

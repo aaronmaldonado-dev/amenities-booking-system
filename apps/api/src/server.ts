@@ -1,6 +1,7 @@
 import 'dotenv/config';
 
 import cors from 'cors';
+import { NextFunction, Request, Response } from 'express';
 import express, { Application } from 'express';
 import mongoose from 'mongoose';
 
@@ -19,6 +20,11 @@ app.disable('x-powered-by');
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use((req: Request, res: Response, next: NextFunction) => {
+  // TODO: add request time
+  next();
+});
 
 app.use(`${API_VERSION}${USERS_PATH}`, userRouter);
 app.use(`${API_VERSION}${AMENITIES_PATH}`, amenityRouter);

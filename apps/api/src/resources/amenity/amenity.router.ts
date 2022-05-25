@@ -1,5 +1,6 @@
 import { Router } from 'express';
 
+import { protect } from '../auth/auth.controller';
 import {
   assignUserSlot,
   createOneAmenity,
@@ -12,11 +13,8 @@ import {
 
 export const router = Router();
 
-router.get('/', getAllAmenities);
-router.delete('/:id', deleteOneAmenity);
-router.post('/create', createOneAmenity);
-
-router.patch('/assignUserSlot/:id', assignUserSlot);
-router.patch('/unassignUserSlot/:id', unassignUserSlot);
-
-router.route('/:id').get(getOneAmenity).patch(updateOneAmenity);
+router.route('/').get(protect, getAllAmenities);
+router.route('/create').post(protect, createOneAmenity);
+router.route('/assignUserSlot/:id').patch(protect, assignUserSlot);
+router.route('/unassignUserSlot/:id').patch(protect, unassignUserSlot);
+router.route('/:id').get(protect, getOneAmenity).patch(protect, updateOneAmenity).delete(protect, deleteOneAmenity);
