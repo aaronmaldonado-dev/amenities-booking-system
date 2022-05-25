@@ -12,7 +12,7 @@ import {
 
 export const router = Router();
 
-router.get('/all', getAllAmenities);
+router.get('/', getAllAmenities);
 router.delete('/:id', deleteOneAmenity);
 router.post('/create', createOneAmenity);
 
