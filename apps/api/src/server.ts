@@ -24,9 +24,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(`${API_VERSION}${USERS_PATH}`, userRouter);
 app.use(`${API_VERSION}${AMENITIES_PATH}`, amenityRouter);
 
-export const start = catchAsync(async () => {
-  mongoose.connect(DATABASE);
-  app.listen(PORT, () => {
-    console.log(`REST API on http://localhost:${PORT}/`);
-  });
-});
+export const start = async () => {
+  try {
+    mongoose.connect(DATABASE);
+    app.listen(PORT, () => {
+      console.log(`REST API on http://localhost:${PORT}/`);
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
